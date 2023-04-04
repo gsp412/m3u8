@@ -1026,7 +1026,7 @@ func TestIndexOutOfBug(t *testing.T) {
 			t.Error("m3u8: media is empty")
 			return
 		}
-		// TODO: 暂时认为m3u8中给的路径都是完整的
+		// 暂时认为m3u8中给的路径都是完整的
 		tsURL = mediaPL.Segments[0].URI
 	case MASTER:
 		t.Error("m3u8: unsupported type")

@@ -14,6 +14,8 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
+	"io"
+	"net/http"
 	"os"
 	"reflect"
 	"testing"
@@ -1003,4 +1005,32 @@ func BenchmarkDecodeMediaPlaylist(b *testing.B) {
 			b.Fatal(err)
 		}
 	}
+}
+
+func TestIndexOutOfBug(t *testing.T) {
+
+	resp, _ := http.Get("http://192.168.31.30/hls/yes1.mp4/index.m3u8")
+	defer resp.Body.Close()
+	md, _ := io.ReadAll(resp.Body)
+
+	p, listType, err := DecodeFrom(bytes.NewBuffer(md), true)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+	var tsURL string
+	switch listType {
+	case MEDIA:
+		mediaPL := p.(*MediaPlaylist)
+		if len(mediaPL.Segments) == 0 {
+			t.Error("m3u8: media is empty")
+			return
+		}
+		// TODO: 暂时认为m3u8中给的路径都是完整的
+		tsURL = mediaPL.Segments[0].URI
+	case MASTER:
+		t.Error("m3u8: unsupported type")
+		return
+	}
+	t.Log(tsURL)
 }

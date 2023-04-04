@@ -6,7 +6,7 @@ package m3u8
 
  Copyright 2013-2019 The Project Developers.
  See the AUTHORS and LICENSE files at the top-level directory of this distribution
- and at https://github.com/grafov/m3u8/
+ and at https://github.com/gsp412/m3u8/
 
  ॐ तारे तुत्तारे तुरे स्व
 */
@@ -369,7 +369,8 @@ func (p *MediaPlaylist) AppendSegment(seg *MediaSegment) error {
 	if p.count > 0 {
 		seg.SeqId = p.Segments[(p.capacity+p.tail-1)%p.capacity].SeqId + 1
 	}
-	p.Segments[p.tail] = seg
+	//p.Segments[p.tail] = seg
+	p.Segments = append(p.Segments, seg)
 	p.tail = (p.tail + 1) % p.capacity
 	p.count++
 	if p.TargetDuration < seg.Duration {
